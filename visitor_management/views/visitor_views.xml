@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_x_custom_visitor_list" model="ir.ui.view">
+        <field name="name">x_custom.visitor.list</field>
+        <field name="model">x_custom.visitor</field>
+        <field name="arch" type="xml">
+            <list string="Visitors"
+                  decoration-success="status == 'checked_in'"
+                  decoration-muted="status in ('checked_out', 'cancelled')">
+                <field name="name"/>
+                <field name="phone" optional="show"/>
+                <field name="company" optional="show"/>
+                <field name="visit_purpose" optional="show"/>
+                <field name="check_in_date"/>
+                <field name="status" widget="badge"
+                       decoration-info="status == 'expected'"
+                       decoration-success="status == 'checked_in'"
+                       decoration-muted="status == 'checked_out'"
+                       decoration-danger="status == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_x_custom_visitor_form" model="ir.ui.view">
+        <field name="name">x_custom.visitor.form</field>
+        <field name="model">x_custom.visitor</field>
+        <field name="arch" type="xml">
+            <form string="Visitor">
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="expected,checked_in,checked_out,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Visitor name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="phone" widget="phone"/>
+                            <field name="company"/>
+                        </group>
+                        <group>
+                            <field name="check_in_date"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="visit_purpose" placeholder="Reason for the visit..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_x_custom_visitor_search" model="ir.ui.view">
+        <field name="name">x_custom.visitor.search</field>
+        <field name="model">x_custom.visitor</field>
+        <field name="arch" type="xml">
+            <search string="Search Visitors">
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="company"/>
+                <field name="visit_purpose"/>
+                <filter name="expected" string="Expected" domain="[('status', '=', 'expected')]"/>
+                <filter name="checked_in" string="Checked In" domain="[('status', '=', 'checked_in')]"/>
+                <filter name="checked_out" string="Checked Out" domain="[('status', '=', 'checked_out')]"/>
+                <separator/>
+                <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                <filter name="group_by_company" string="Company" context="{'group_by': 'company'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_x_custom_visitors" model="ir.actions.act_window">
+        <field name="name">Visitors</field>
+        <field name="res_model">x_custom.visitor</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_x_custom_visitor_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first visitor</p>
+            <p>Register visitor details and track their current visit status.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_visitor_management_root"
+              name="Visitor Management"
+              sequence="10"/>
+    <menuitem id="menu_x_custom_visitors"
+              name="Visitors"
+              parent="menu_visitor_management_root"
+              action="action_x_custom_visitors"
+              sequence="10"/>
+</odoo>
